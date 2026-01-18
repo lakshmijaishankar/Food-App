@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@navigation/*": ["./src/navigation/*"],
+      "@screens/*": ["./src/screens/*"],
+      "@theme": ["./src/theme"],
+      "@theme/*": ["./src/theme/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@db/*": ["./src/db/*"],
+      "@types/*": ["./src/types/*"],
+      "@services/*": ["./src/services/*"],
+      "@store/*": ["./src/store/*"]
+    }
+  },
+  "extends": "@react-native/typescript-config/tsconfig.json"
+  // "include": ["src/*.d.ts", "src/**/*.{ts,tsx}", "*.d.ts"]
+}

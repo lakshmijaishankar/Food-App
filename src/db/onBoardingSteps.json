@@ -1,0 +1,22 @@
+{
+  "onBoardingSteps": [
+    {
+      "id": 1,
+      "title": "All your favorites",
+      "shortMess": "Get all your loved foods in one once place,you just place the orer we do the rest",
+      "img": "../assets/icons/Onboarding_01.png"
+    },
+    {
+      "id": 2,
+      "title": "Order from choosen chef",
+      "shortMess": "Get all your loved foods in one once place,you just place the orer we do the rest",
+      "img": "../assets/icons/Onboarding_01.png"
+    },
+    {
+      "id": 3,
+      "title": "Free delivery offers",
+      "shortMess": "Get all your loved foods in one once place,you just place the orer we do the rest",
+      "img": "../assets/icons/Onboarding_01.png"
+    }
+  ]
+}
