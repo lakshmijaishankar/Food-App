@@ -31,7 +31,9 @@ jobs:
         run: chmod +x android/gradlew
 
       - name: Build Android Application
-        run: npx react-native build-android --mode=release
+        run: |
+           cd android
+           ./gradlew assembleRelease
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
