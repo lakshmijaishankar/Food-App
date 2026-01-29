@@ -1,0 +1,85 @@
+{
+  "sections": [
+    {
+      "id": "profile",
+      "items": [
+        {
+          "id": "personal_info",
+          "title": "Personal Info",
+          "icon": "user",
+          "route": "PersonalInfo"
+        },
+        {
+          "id": "addresses",
+          "title": "Addresses",
+          "icon": "map",
+          "route": "Addresses"
+        }
+      ]
+    },
+    {
+      "id": "activity",
+      "items": [
+        {
+          "id": "cart",
+          "title": "Cart",
+          "icon": "cart",
+          "route": "Cart"
+        },
+        {
+          "id": "favourite",
+          "title": "Favourite",
+          "icon": "heart",
+          "route": "Favourite"
+        },
+        {
+          "id": "notifications",
+          "title": "Notifications",
+          "icon": "bell",
+          "route": "Notifications"
+        },
+        {
+          "id": "payment_method",
+          "title": "Payment Method",
+          "icon": "card",
+          "route": "PaymentMethod"
+        }
+      ]
+    },
+    {
+      "id": "support",
+      "items": [
+        {
+          "id": "faqs",
+          "title": "FAQs",
+          "icon": "help",
+          "route": "FAQs"
+        },
+        {
+          "id": "user_reviews",
+          "title": "User Reviews",
+          "icon": "reviews",
+          "route": "UserReviews"
+        },
+        {
+          "id": "settings",
+          "title": "Settings",
+          "icon": "settings",
+          "route": "Settings"
+        }
+      ]
+    },
+    {
+      "id": "logout",
+      "items": [
+        {
+          "id": "logout",
+          "title": "Log Out",
+          "icon": "logout",
+          "route": "Logout",
+          "isDestructive": true
+        }
+      ]
+    }
+  ]
+}
