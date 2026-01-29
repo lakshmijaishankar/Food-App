@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useCallback, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -6,16 +6,18 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useNavigation} from '@react-navigation/native';
-import {Button, customText, TextInput, useTheme} from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { Button, customText, TextInput, useTheme } from 'react-native-paper';
 import color from 'color';
-import {useForm} from 'react-hook-form';
-import {ControlledTextInput} from '@components/text-input/ControlledTextInput';
+import { useForm } from 'react-hook-form';
+import { ControlledTextInput } from '@components/text-input/ControlledTextInput';
 import EllipseIcon from '@assets/icons/Ellipse-1005.svg';
 import CurveIcon from '@assets/icons/Curve.svg';
 import BackIcon from '@assets/icons/Back.svg';
-import {useKeyBoardVisible} from '@hooks/useKeyBoardVisible';
+import { useKeyBoardVisible } from '@hooks/useKeyBoardVisible';
+import { useAppDispatch } from '@store/hooks';
+import { saveUserToStorage } from '@store/user';
 
 const Text = customText<'medium' | 'bold'>();
 
@@ -23,7 +25,7 @@ type SignUpForm = {
   name: string;
   email: string;
   password: string;
-  reTypedPassword: string;
+  reTypedPassword?: string;
 };
 
 const signUpFormDefaultValues: SignUpForm = {
@@ -45,15 +47,24 @@ export function SignUp() {
     showReTypedPwd: false,
   });
   const isKeyboardVisible = useKeyBoardVisible();
+  const dispatch = useAppDispatch();
 
-  const {showPwd, showReTypedPwd} = showPassword;
-  const {formState} = form;
-  const {errors, isValid} = formState;
+  const { showPwd, showReTypedPwd } = showPassword;
+  const { formState, handleSubmit } = form;
+  const { errors, isValid } = formState;
+
+  const handleSaveUser = useCallback<Parameters<typeof handleSubmit>['0']>(
+    data => {
+      delete data.reTypedPassword;
+      dispatch(saveUserToStorage(data));
+    },
+    [dispatch],
+  );
 
   return (
     <SafeAreaView style={style.safeArea} edges={['left', 'right', 'bottom']}>
       <KeyboardAvoidingView
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         behavior={
           Platform.OS === 'ios'
             ? 'padding'
@@ -70,16 +81,16 @@ export function SignUp() {
           </View>
           <View style={style.signupOverlay}>
             <View style={style.sectionPaperTop}>
-              <View style={{flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row' }}>
                 <Button
                   mode="contained"
                   style={style.goBackBtn}
-                  labelStyle={{marginHorizontal: 0}}
+                  labelStyle={{ marginHorizontal: 0 }}
                   onPress={() => navigation.goBack()}>
                   <BackIcon />
                 </Button>
               </View>
-              <View style={{marginTop: 24}}>
+              <View style={{ marginTop: 24 }}>
                 <Text
                   variant="bold"
                   style={{
@@ -102,7 +113,7 @@ export function SignUp() {
               </View>
             </View>
             <View style={style.sectionPaperBottom}>
-              <View style={{flex: 1, justifyContent: 'space-between'}}>
+              <View style={{ flex: 1, justifyContent: 'space-between' }}>
                 <ScrollView keyboardShouldPersistTaps="handled">
                   <View>
                     <Text variant="medium">NAME</Text>
@@ -110,7 +121,7 @@ export function SignUp() {
                       placeholder="name"
                       name="name"
                       control={form.control}
-                      rules={{required: 'Name Required'}}
+                      rules={{ required: 'Name Required' }}
                       error={Boolean(errors.name?.message)}
                       errorHelper={errors.name?.message}
                       autoCorrect={false}
@@ -124,7 +135,7 @@ export function SignUp() {
                       name="email"
                       control={form.control}
                       keyboardType="email-address"
-                      rules={{required: 'Email Required'}}
+                      rules={{ required: 'Email Required' }}
                       error={Boolean(errors.email?.message)}
                       errorHelper={errors.email?.message}
                     />
@@ -147,7 +158,7 @@ export function SignUp() {
                           }
                         />
                       }
-                      rules={{required: 'Password Required'}}
+                      rules={{ required: 'Password Required' }}
                       error={Boolean(errors.password?.message)}
                       errorHelper={errors.password?.message}
                     />
@@ -170,7 +181,7 @@ export function SignUp() {
                           }
                         />
                       }
-                      rules={{required: 'Re-type Password Required'}}
+                      rules={{ required: 'Re-type Password Required' }}
                       error={Boolean(errors.reTypedPassword?.message)}
                       errorHelper={errors.reTypedPassword?.message}
                     />
@@ -180,7 +191,7 @@ export function SignUp() {
                   mode="contained"
                   labelStyle={style.signUpBtnLabel}
                   style={style.signUpBtn}
-                  onPress={isValid ? () => {} : undefined}
+                  onPress={isValid ? handleSubmit(handleSaveUser) : undefined}
                   buttonColor={color(theme.colors.primary)
                     .alpha(isValid ? 1 : 0.5)
                     .toString()}

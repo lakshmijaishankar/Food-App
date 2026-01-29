@@ -1,7 +1,7 @@
-import {useState} from 'react';
-import {StyleSheet, View, TouchableOpacity} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useNavigation} from '@react-navigation/native';
+import { useState } from 'react';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import {
   Button,
   customText,
@@ -10,11 +10,13 @@ import {
   RadioButton,
 } from 'react-native-paper';
 import color from 'color';
-import {useForm} from 'react-hook-form';
-import {GoogleLogin} from '@components/social-login/GoogleLogin';
+import { useForm } from 'react-hook-form';
+import { GoogleLogin } from '@components/social-login/GoogleLogin';
 import EllipseIcon from '@assets/icons/Ellipse-1005.svg';
 import CurveIcon from '@assets/icons/Curve.svg';
-import {ControlledTextInput} from '@components/text-input/ControlledTextInput';
+import { ControlledTextInput } from '@components/text-input/ControlledTextInput';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types/nativeStackNavigator';
 
 const Text = customText<'medium' | 'bold'>();
 
@@ -30,7 +32,8 @@ const loginFormDefaultValues: LoginForm = {
 
 export function Login() {
   const theme = useTheme();
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const form = useForm<LoginForm>({
     defaultValues: loginFormDefaultValues,
     mode: 'all',
@@ -38,13 +41,12 @@ export function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const {formState} = form;
-  const {errors, isValid} = formState;
+  const { formState } = form;
+  const { errors, isValid } = formState;
 
   const handleLogin = () => {
     if (isValid) {
-      // Handle login logic here
-      console.log('Login submitted', form.getValues());
+      navigation.navigate('HomeDashboard');
     }
   };
 
@@ -55,7 +57,7 @@ export function Login() {
 
   const handleSignUp = () => {
     // Navigate to sign up screen
-    navigation.navigate('SignUp' as never);
+    navigation.navigate('SignUp');
   };
 
   return (
@@ -69,7 +71,7 @@ export function Login() {
         </View>
         <View style={styles.loginOverlay}>
           <View style={styles.sectionPaperTop}>
-            <View style={{marginTop: 0}}>
+            <View style={{ marginTop: 0 }}>
               <Text
                 variant="bold"
                 style={{
@@ -92,7 +94,7 @@ export function Login() {
             </View>
           </View>
           <View style={styles.sectionPaperBottom}>
-            <View style={{flex: 1, justifyContent: 'space-between'}}>
+            <View style={{ flex: 1, justifyContent: 'space-between' }}>
               <View>
                 <Text variant="medium">EMAIL</Text>
                 <ControlledTextInput
@@ -125,7 +127,7 @@ export function Login() {
                       onPress={() => setShowPassword(prev => !prev)}
                     />
                   }
-                  rules={{required: 'Password Required'}}
+                  rules={{ required: 'Password Required' }}
                   error={Boolean(errors.password?.message)}
                   errorHelper={errors.password?.message}
                 />
