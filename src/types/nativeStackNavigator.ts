@@ -5,4 +5,8 @@ export type RootStackParamList = {
   SignUp?: EmptyObject;
   Login?: EmptyObject;
   HomeDashboard?: EmptyObject;
+  Settings?: EmptyObject;
+  AuthLoading?: EmptyObject;
+  PersonalInfo?: EmptyObject;
+  EditProfile?: EmptyObject;
 };

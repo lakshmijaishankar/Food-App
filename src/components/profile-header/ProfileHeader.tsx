@@ -1,15 +1,26 @@
 import { BackButton } from '@components/back-button/BackButton';
-import { StyleSheet, View } from 'react-native';
+import { type ReactNode } from 'react';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { Text } from 'react-native-paper';
 
-export function ProfileHeader() {
+type ProfileHeaderProps = {
+  title?: string;
+  containerStyle?: StyleProp<ViewStyle> | undefined;
+  rightSection?: ReactNode;
+};
+
+export function ProfileHeader({
+  title = 'Profile',
+  containerStyle = { backgroundColor: '#fff' },
+  rightSection,
+}: ProfileHeaderProps) {
   return (
-    <View style={styles.profileHeaderContainer}>
+    <View style={[styles.profileHeaderContainer, containerStyle]}>
       <View style={styles.profileLeftContainer}>
         <BackButton />
-        <Text style={styles.profileTitle}>Profile</Text>
+        <Text style={styles.profileTitle}>{title}</Text>
       </View>
-      <View style={styles.profileRightContainer} />
+      {rightSection ?? <View style={styles.profileRightContainer} />}
     </View>
   );
 }

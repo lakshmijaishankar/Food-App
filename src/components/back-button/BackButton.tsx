@@ -71,7 +71,7 @@ export function BackButton({
         contentStyle,
       ]}
       labelStyle={labelStyle}
-      children={icon ?? <BackIcon />}
+      children={icon ?? <BackIcon style={{ transform: [{ scale: 0.7 }] }} />}
     />
   );
 }
