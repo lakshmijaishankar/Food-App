@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { useCallback, useState } from 'react';
+import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import {
@@ -10,13 +10,16 @@ import {
   RadioButton,
 } from 'react-native-paper';
 import color from 'color';
-import { useForm } from 'react-hook-form';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { GoogleLogin } from '@components/social-login/GoogleLogin';
 import EllipseIcon from '@assets/icons/Ellipse-1005.svg';
 import CurveIcon from '@assets/icons/Curve.svg';
 import { ControlledTextInput } from '@components/text-input/ControlledTextInput';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types/nativeStackNavigator';
+import { useAppDispatch } from '@store/hooks';
+import { saveUserToStorage } from '@store/user';
+import { BioMetricUnlock } from '@components/biometric-unlock/BioMetricUnlock';
 
 const Text = customText<'medium' | 'bold'>();
 
@@ -40,15 +43,20 @@ export function Login() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const dispatch = useAppDispatch();
 
-  const { formState } = form;
+  const { formState, handleSubmit } = form;
   const { errors, isValid } = formState;
 
-  const handleLogin = () => {
-    if (isValid) {
-      navigation.navigate('HomeDashboard');
-    }
-  };
+  const handleLogin: SubmitHandler<LoginForm> = useCallback(
+    data => {
+      if (isValid) {
+        dispatch(saveUserToStorage(data));
+        navigation.replace('HomeDashboard');
+      }
+    },
+    [isValid, navigation, dispatch],
+  );
 
   const handleForgotPassword = () => {
     // Navigate to forgot password screen
@@ -94,83 +102,86 @@ export function Login() {
             </View>
           </View>
           <View style={styles.sectionPaperBottom}>
-            <View style={{ flex: 1, justifyContent: 'space-between' }}>
-              <View>
-                <Text variant="medium">EMAIL</Text>
-                <ControlledTextInput
-                  placeholder="example@gmail.com"
-                  name="email"
-                  control={form.control}
-                  keyboardType="email-address"
-                  rules={{
-                    required: 'Email Required',
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Invalid email address',
-                    },
-                  }}
-                  error={Boolean(errors.email?.message)}
-                  errorHelper={errors.email?.message}
-                  autoCapitalize="none"
-                />
-              </View>
-              <View style={styles.inputWrapper}>
-                <Text variant="medium">PASSWORD</Text>
-                <ControlledTextInput
-                  placeholder="* * * * * * * * * *"
-                  name="password"
-                  control={form.control}
-                  secureTextEntry={!showPassword}
-                  right={
-                    <TextInput.Icon
-                      icon={`eye-${showPassword ? '' : 'off-'}outline`}
-                      onPress={() => setShowPassword(prev => !prev)}
-                    />
-                  }
-                  rules={{ required: 'Password Required' }}
-                  error={Boolean(errors.password?.message)}
-                  errorHelper={errors.password?.message}
-                />
-              </View>
-              <View style={styles.rememberForgotRow}>
-                <View style={styles.rememberMeContainer}>
-                  <RadioButton
-                    value="remember"
-                    status={rememberMe ? 'checked' : 'unchecked'}
-                    onPress={() => setRememberMe(prev => !prev)}
-                    color={theme.colors.primary}
+            <ScrollView>
+              <View style={{ flex: 1, justifyContent: 'space-between' }}>
+                <View>
+                  <Text variant="medium">EMAIL</Text>
+                  <ControlledTextInput
+                    placeholder="example@gmail.com"
+                    name="email"
+                    control={form.control}
+                    keyboardType="email-address"
+                    rules={{
+                      required: 'Email Required',
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: 'Invalid email address',
+                      },
+                    }}
+                    error={Boolean(errors.email?.message)}
+                    errorHelper={errors.email?.message}
+                    autoCapitalize="none"
                   />
-                  <Text style={styles.rememberMeText}>Remember me</Text>
                 </View>
-                <TouchableOpacity onPress={handleForgotPassword}>
-                  <Text style={styles.forgotPasswordText}>Forgot Password</Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.bottomSection}>
-                <Button
-                  mode="contained"
-                  labelStyle={styles.loginBtnLabel}
-                  style={styles.loginBtn}
-                  onPress={isValid ? handleLogin : undefined}
-                  buttonColor={color(theme.colors.primary)
-                    .alpha(isValid ? 1 : 0.5)
-                    .toString()}
-                  contentStyle={styles.loginBtnContentStyle}>
-                  LOG IN
-                </Button>
-                <View style={styles.signUpContainer}>
-                  <Text style={styles.noAccountText}>
-                    Don't have an account?
-                  </Text>
-                  <TouchableOpacity onPress={handleSignUp}>
-                    <Text style={styles.signUpText}> SIGN UP</Text>
+                <View style={styles.inputWrapper}>
+                  <Text variant="medium">PASSWORD</Text>
+                  <ControlledTextInput
+                    placeholder="* * * * * * * * * *"
+                    name="password"
+                    control={form.control}
+                    secureTextEntry={!showPassword}
+                    right={
+                      <TextInput.Icon
+                        icon={`eye-${showPassword ? '' : 'off-'}outline`}
+                        onPress={() => setShowPassword(prev => !prev)}
+                      />
+                    }
+                    rules={{ required: 'Password Required' }}
+                    error={Boolean(errors.password?.message)}
+                    errorHelper={errors.password?.message}
+                  />
+                </View>
+                <View style={styles.rememberForgotRow}>
+                  <View style={styles.rememberMeContainer}>
+                    <RadioButton
+                      value="remember"
+                      status={rememberMe ? 'checked' : 'unchecked'}
+                      onPress={() => setRememberMe(prev => !prev)}
+                      color={theme.colors.primary}
+                    />
+                    <Text style={styles.rememberMeText}>Remember me</Text>
+                  </View>
+                  <TouchableOpacity onPress={handleForgotPassword}>
+                    <Text style={styles.forgotPasswordText}>
+                      Forgot Password
+                    </Text>
                   </TouchableOpacity>
                 </View>
-                <Text style={styles.orText}>Or</Text>
-                <View style={styles.socialContainer}>
-                  <GoogleLogin />
-                  {/* <TouchableOpacity
+
+                <View style={styles.bottomSection}>
+                  <Button
+                    mode="contained"
+                    labelStyle={styles.loginBtnLabel}
+                    style={styles.loginBtn}
+                    onPress={isValid ? handleSubmit(handleLogin) : undefined}
+                    buttonColor={color(theme.colors.primary)
+                      .alpha(isValid ? 1 : 0.5)
+                      .toString()}
+                    contentStyle={styles.loginBtnContentStyle}>
+                    LOG IN
+                  </Button>
+                  <View style={styles.signUpContainer}>
+                    <Text style={styles.noAccountText}>
+                      Don't have an account?
+                    </Text>
+                    <TouchableOpacity onPress={handleSignUp}>
+                      <Text style={styles.signUpText}> SIGN UP</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={styles.orText}>Or</Text>
+                  <View style={styles.socialContainer}>
+                    <GoogleLogin />
+                    {/* <TouchableOpacity
                     style={[styles.socialButton, styles.facebookButton]}
                     onPress={() => handleSocialLogin('google')}>
                     <Text style={styles.socialIcon}>f</Text>
@@ -185,12 +196,14 @@ export function Login() {
                     onPress={() => handleSocialLogin('apple')}>
                     <Text style={styles.socialIcon}>{''}</Text>
                   </TouchableOpacity> */}
+                  </View>
                 </View>
               </View>
-            </View>
+            </ScrollView>
           </View>
         </View>
       </View>
+      <BioMetricUnlock />
     </SafeAreaView>
   );
 }
@@ -200,16 +213,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#121223',
     position: 'relative',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   ellipseContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    zIndex: 111,
+    // position: 'absolute',
+    // top: 0,
+    // left: 0,
+    // zIndex: 111,
   },
   curveContainer: {
-    position: 'absolute',
-    top: 0,
+    // position: 'absolute',
+    // top: 0,
     right: -35,
   },
   loginOverlay: {

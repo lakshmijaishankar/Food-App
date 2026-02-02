@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { ScrollView, View } from 'react-native';
 import { ProfileHeader } from '@components/profile-header/ProfileHeader';
 import { NativeStatusBar } from '@components/status-bar/NativeStatusBar';
@@ -18,6 +18,9 @@ import PaymentIcon from '@assets/icons/Payment-Icon.svg';
 import NotificationIcon from '@assets/icons/Notification-Icon.svg';
 import ArrowRightIcon from '@assets/icons/Back.svg';
 import { ProfileSectionItem } from '@components/profile-section-item/ProfileSectionItem';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types/nativeStackNavigator';
 
 const ICONS_GROUP: Record<string, ReactNode> = {
   user: <ProfileIcon />,
@@ -34,15 +37,27 @@ const ICONS_GROUP: Record<string, ReactNode> = {
 
 export function Profile() {
   const theme = useTheme();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const scrollRef = useRef<ScrollView>(null);
+
+  useFocusEffect(() => {
+    scrollRef.current?.scrollTo({ animated: true, y: 0 });
+    return () => undefined;
+  });
+
   return (
-    <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1 }}>
+    <SafeAreaView edges={['left', 'right']} style={{ flex: 1 }}>
       <NativeStatusBar />
       <View style={{ flex: 1, backgroundColor: '#fff' }}>
         <View style={{ paddingInline: 26, flex: 1 }}>
           <ProfileHeader />
           <ScrollView
-            contentContainerStyle={{ paddingBottom: 62 }}
-            showsVerticalScrollIndicator={false}>
+            contentContainerStyle={{
+              paddingBottom: 82,
+            }}
+            showsVerticalScrollIndicator={false}
+            ref={scrollRef}>
             <View
               style={{
                 flexDirection: 'row',
@@ -98,10 +113,14 @@ export function Profile() {
                       }
                       onPress={() => {
                         if (item.id === 'logout') {
-                          // logout logic
+                          navigation.replace('Login');
                           return;
                         }
-                        // navigation.navigate(item.route)
+                        if (['settings', 'personal_info'].includes(item.id)) {
+                          navigation.navigate(
+                            item.route as keyof RootStackParamList,
+                          );
+                        }
                       }}
                     />
                   ))}

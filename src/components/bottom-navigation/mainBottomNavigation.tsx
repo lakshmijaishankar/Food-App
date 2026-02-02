@@ -18,7 +18,8 @@ export function MainBottomNavigation() {
     <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
       <Navigator
         tabBar={props => <SlidingTabBar {...props} />}
-        initialRouteName="Profile"
+        initialRouteName="Home"
+        backBehavior="history"
         screenOptions={{
           headerShown: false,
           tabBarStyle: {

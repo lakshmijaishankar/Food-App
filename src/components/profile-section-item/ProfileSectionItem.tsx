@@ -1,9 +1,11 @@
-import { type ReactNode } from 'react';
+import { isValidElement, type ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { customText } from 'react-native-paper';
+
+const Text = customText<'regular'>();
 
 type ProfileSectionItemProps = {
-  title: string;
+  title: ReactNode;
   leftIcon: ReactNode;
   rightIcon?: ReactNode;
   onPress?: () => void;
@@ -15,8 +17,8 @@ export function ProfileSectionItem({
   leftIcon,
   rightIcon,
   onPress,
-  isDestructive = false,
 }: ProfileSectionItemProps) {
+  const isElement = isValidElement(title);
   return (
     <Pressable
       onPress={onPress}
@@ -30,9 +32,13 @@ export function ProfileSectionItem({
       <View style={styles.leftIcon}>{leftIcon}</View>
       {/* Title */}
       <View style={styles.titleContainer}>
-        <Text variant="regular" style={styles.title}>
-          {title}
-        </Text>
+        {isElement ? (
+          title
+        ) : (
+          <Text variant="regular" style={styles.title}>
+            {title}
+          </Text>
+        )}
       </View>
       {/* Right Icon */}
       {rightIcon && <View>{rightIcon}</View>}

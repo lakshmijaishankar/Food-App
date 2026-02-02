@@ -5,7 +5,7 @@ import {setValue, getValue, deleteValue} from '../../utils/asyncStorage';
 const USER_STORAGE_KEY = '@user_data';
 
 export interface User {
-  name: string;
+  name?: string;
   email: string;
   password: string;
 }
